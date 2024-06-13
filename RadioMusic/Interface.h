@@ -32,7 +32,7 @@
 #define LONG_PRESS_DURATION 600
 // after LONG_PRESS_DURATION every LONG_PRESS_PULSE_DELAY milliseconds the update
 // function will set BUTTON_PULSE
-#define LONG_PRESS_PULSE_DELAY 600
+#define LONG_PRESS_PULSE_DELAY 1000
 
 #define SAMPLEAVERAGE   16 	// How many values are read and averaged of pot/CV inputs each interface check.
 

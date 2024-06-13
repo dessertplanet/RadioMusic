@@ -83,6 +83,7 @@ elapsedMillis peakDisplayTimer; // COUNTER FOR PEAK METER FRAMERATE
 int prevBankTimer = 0;
 boolean flashLeds = false;
 boolean bankChangeMode = false;
+boolean pitchChangeMode = false;
 File settingsFile;
 
 Settings settings("SETTINGS.TXT");
@@ -293,19 +294,30 @@ uint16_t checkInterface() {
 	if((changes & BUTTON_LONG_PRESS) && !bankChangeMode) {
 		D(Serial.println("Enter bank change mode"););
 		bankChangeMode = true;
-		nextBank();
+		// nextBank();
 //		ledFlashTimer = 0;
 	} else if((changes & BUTTON_LONG_RELEASE) && bankChangeMode) {
 		D(Serial.println("Exit bank change mode"););
 		flashLeds = false;
 		bankChangeMode = false;
+		if(!pitchChangeMode) nextBank();
+		pitchChangeMode = false;
+		if (settings.showMeter) peakMeter();
 	}
 
 	if(changes & BUTTON_PULSE) {
 //		flashLeds = false;
 		if(bankChangeMode) {
-			D(Serial.println("BUTTON PULSE"););
-			nextBank();
+			
+			pitchChangeMode = true;
+			settings.pitchMode = !settings.pitchMode;
+			interface.init(fileScanner.fileInfos[playState.bank][0].size, fileScanner.numFilesInBank[playState.bank], settings, &playState);
+
+			flashLeds = true;
+
+			D(Serial.println("BUTTON PULSE: setting pitchMode"););
+			D(Serial.println(settings.pitchMode););
+
 		} else {
 			D(Serial.println("Button Pulse but not in bank mode"););
 		}
@@ -313,6 +325,12 @@ uint16_t checkInterface() {
 	}
 
 	boolean resetTriggered = changes & RESET_TRIGGERED;
+
+	if (resetTriggered) {
+		flashLeds = false;
+		pitchChangeMode = false;
+	}
+
 
 	bool skipToStartPoint = false;
 	bool speedChange = false;
