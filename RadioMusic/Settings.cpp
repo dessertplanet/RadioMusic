@@ -240,6 +240,9 @@ void Settings::applySetting(String settingName, String settingValue) {
 	if(settingName.equalsIgnoreCase("quantiseNotePot") || settingName.equalsIgnoreCase("quantizeRootPot")) {
 		quantiseRootPot = toBoolean(settingValue);
 	}
+	if(settingName.equalsIgnoreCase("local")) {
+		local = toBoolean(settingValue);
+	}
 
 }
 
@@ -293,6 +296,8 @@ void Settings::write() {
 	settingsFile.println(sort);
 	settingsFile.print("pitchMode=");
 	settingsFile.println(pitchMode);
+	settingsFile.print("local=");
+	settingsFile.println(local);
 	// close the file:
 	settingsFile.close();
 }
