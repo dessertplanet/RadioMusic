@@ -269,9 +269,9 @@ void Settings::write() {
 	Serial.println("Settings file not found, writing new settings");
 
 	// Delete the old One
-	SD.remove("settings.txt");
+	SD.remove(_filename);
 	// Create new one
-	settingsFile = SD.open("settings.txt", FILE_WRITE);
+	settingsFile = SD.open(_filename, FILE_WRITE);
 	settingsFile.print("crossfade=");
 	settingsFile.println(crossfade);
 	settingsFile.print("crossfadeTime=");

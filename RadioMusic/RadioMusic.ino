@@ -86,6 +86,8 @@ boolean bankChangeMode = false;
 File settingsFile;
 
 Settings settings("SETTINGS.TXT");
+Settings* localSettingsStorage;
+Settings* localSettings[16];
 LedControl ledControl;
 FileScanner fileScanner;
 AudioEngine audioEngine;
@@ -121,6 +123,21 @@ void setup() {
 
 	File root = SD.open("/");
 	fileScanner.scan(&root, settings);
+
+	if(settings.local) {
+		int settingsSize = sizeof(Settings) * (fileScanner.lastBankIndex + 1);
+		localSettingsStorage= (Settings*)malloc(settingsSize);
+
+		for (int i=0; i < (fileScanner.lastBankIndex+1); i++){
+			char path[30];
+			sprintf(path, "%i/SETTINGS.TXT",i);
+			Settings *p = localSettingsStorage;
+			p = &Settings(path);
+			p->init(hasSD);
+			localSettings[i] = p;
+			p += sizeof(Settings);
+		}
+	}
 
 	getSavedBankPosition();
 
