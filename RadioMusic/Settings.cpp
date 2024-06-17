@@ -34,12 +34,15 @@ void Settings::copyDefaults() {
 
 void Settings::read() {
 
-	D(Serial.println("Reading settings.txt"););
+	D(
+		Serial.print("Reading ");
+		Serial.println(_filename);
+	);
 
 	char character;
 	String settingName;
 	String settingValue;
-	settingsFile = SD.open("settings.txt");
+	settingsFile = SD.open(_filename);
 
 	uint8_t NAME = 1;
 	uint8_t VALUE = 2;
@@ -72,7 +75,8 @@ void Settings::read() {
 		settingsFile.close();
 	} else {
 		// if the file didn't open, print an error:
-		Serial.println("error opening settings.txt");
+		Serial.print("error opening ");
+		Serial.println(_filename);
 	}
 	// Do test settings here
 
@@ -266,7 +270,8 @@ boolean Settings::toBoolean(String settingValue) {
 }
 
 void Settings::write() {
-	Serial.println("Settings file not found, writing new settings");
+	Serial.print(_filename);
+	Serial.println(" not found, writing new settings");
 
 	// Delete the old One
 	SD.remove(_filename);
