@@ -296,7 +296,7 @@ void updateDisplay(uint16_t changes) {
 		} else {
 			ledFlashTimer = 0;
 		}
-	} else if (settings.showMeter && !bankChangeMode) {
+	} else if (currentSettings->showMeter && !bankChangeMode) {
 		peakMeter();
 	}
 }
@@ -341,7 +341,7 @@ uint16_t checkInterface() {
 	bool skipToStartPoint = false;
 	bool speedChange = false;
 
-	if(settings.pitchMode) {
+	if(currentSettings->pitchMode) {
 
 		if(resetTriggered) {
 			skipToStartPoint = true;
@@ -368,7 +368,7 @@ uint16_t checkInterface() {
 
 	if(speedChange) doSpeedChange();
 	if(skipToStartPoint && !playState.channelChanged) {
-		if(settings.pitchMode) {
+		if(currentSettings->pitchMode) {
 			audioEngine.skipTo(0);
 		} else {
 			D(Serial.print("Skip to ");Serial.println(interface.start););
@@ -382,7 +382,7 @@ uint16_t checkInterface() {
 
 void doSpeedChange() {
 	float speed = 1.0;
-	speed = interface.rootNote - settings.rootNote;
+	speed = interface.rootNote - currentSettings->rootNote;
 	D(Serial.print("Root ");Serial.println(interface.rootNote););
 	speed = pow(2,speed / 12);
 
@@ -447,7 +447,7 @@ void engineTest() {
 #endif
 
 void peakMeter() {
-	if( (peakDisplayTimer < 50) || (meterDisplayDelayTimer < settings.meterHide) ) return;
+	if( (peakDisplayTimer < 50) || (meterDisplayDelayTimer < currentSettings->meterHide) ) return;
 
 	float peakReading = audioEngine.getPeak();
 	int monoPeak = round(peakReading * 4);
