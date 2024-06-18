@@ -89,6 +89,7 @@ File settingsFile;
 
 Settings settings("SETTINGS.TXT");
 Settings* localSettings[MAX_BANKS];
+Settings* currentSettings = &settings;
 LedControl ledControl;
 FileScanner fileScanner;
 AudioEngine audioEngine;
@@ -126,20 +127,28 @@ void setup() {
 	fileScanner.scan(&root, settings);
 
 	if(settings.local) {
-
-
 		for (int i=0; i < (fileScanner.lastBankIndex+1); i++){
 			char path[35];
 			sprintf(path, "%i/LOCAL.TXT",i);
 			localSettings[i] = (Settings*)malloc(sizeof(Settings));
 			localSettings[i] = new Settings(path);
 			localSettings[i]->init(hasSD);
+			localSettings[i]->local = 1;
 		}
 	}
 
 	getSavedBankPosition();
 
-	audioEngine.init(settings);
+	if (settings.local) {
+		*currentSettings = *localSettings[playState.bank];
+		fileScanner.scan(&root, *currentSettings);
+		D(
+			Serial.print("Using local settings from bank ");
+			Serial.println(playState.bank);
+		)
+	}
+
+	audioEngine.init(*currentSettings);
 
 	int numFiles = 0;
 	for(int i=0;i<=fileScanner.lastBankIndex;i++) {
@@ -162,7 +171,7 @@ void setup() {
 		D(Serial.print("Set bank to ");Serial.println(playState.bank););
 	}
 
-	interface.init(fileScanner.fileInfos[playState.bank][0].size, fileScanner.numFilesInBank[playState.bank], settings, &playState);
+	interface.init(fileScanner.fileInfos[playState.bank][0].size, fileScanner.numFilesInBank[playState.bank], *currentSettings, &playState);
 
 	D(Serial.println("--READY--"););
 }
@@ -407,6 +416,8 @@ void nextBank() {
 
 	meterDisplayDelayTimer = 0;
 	EEPROM.write(EEPROM_BANK_SAVE_ADDRESS, playState.bank);
+
+	if (settings.local) reBoot(0);
 }
 
 #ifdef ENGINE_TEST
