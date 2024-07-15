@@ -323,6 +323,7 @@ uint16_t checkInterface() {
 		D(Serial.println("Exit bank change mode"););
 		flashLeds = false;
 		bankChangeMode = false;
+		if (settings.local) reBoot(0);
 	}
 
 	if(changes & BUTTON_PULSE) {
@@ -416,8 +417,6 @@ void nextBank() {
 
 	meterDisplayDelayTimer = 0;
 	EEPROM.write(EEPROM_BANK_SAVE_ADDRESS, playState.bank);
-
-	if (settings.local) reBoot(0);
 }
 
 #ifdef ENGINE_TEST
