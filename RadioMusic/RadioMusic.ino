@@ -344,7 +344,7 @@ uint16_t checkInterface() {
 
 	if(speedChange) doSpeedChange();
 	if(skipToStartPoint && !playState.channelChanged) {
-		if(settings.pitchMode) {
+		if(settings.pitchMode && !settings.separatePitchStart) {
 			audioEngine.skipTo(0);
 		} else {
 			D(Serial.print("Skip to ");Serial.println(interface.start););

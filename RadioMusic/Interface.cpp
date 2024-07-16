@@ -36,6 +36,7 @@ void Interface::init(int fileSize, int channels, const Settings& settings, PlayS
 	startCVDivider = settings.startCVDivider * (ADC_MAX_VALUE / 1024);
 
 	pitchMode = settings.pitchMode;
+	separatePitchStart = settings.separatePitchStart;
 
     if(pitchMode) {
         quantiseRootCV = settings.quantiseRootCV;
@@ -81,6 +82,17 @@ uint16_t Interface::update() {
 
 	uint16_t channelChanged = updateChannelControls();
 	uint16_t startChanged = pitchMode ? updateRootControls() : updateStartControls();
+
+	if (pitchMode) {
+		if (separatePitchStart){
+			startChanged |= updateRootControls();
+			startChanged |= updateStartControls();
+		} else {
+			startChanged = updateRootControls();
+		}
+	} else {
+		startChanged = updateStartControls();
+	}
 
 	changes = channelChanged;
 	changes |= startChanged;
@@ -134,7 +146,7 @@ uint16_t Interface::updateStartControls() {
 	boolean cvChanged = startCVInput.update();
 	boolean potChanged = startPotInput.update();
 
-	if(potChanged) {
+	if(potChanged && !separatePitchStart) {
 		changes |= TIME_POT_CHANGED;
 		if(startPotImmediate) {
 			changes |= CHANGE_START_NOW;
@@ -181,7 +193,7 @@ uint16_t Interface::updateRootControls() {
     float rootPot = startPotInput.currentValue;
     float rootCV = startCVInput.currentValue;
 
-    if(cvChanged) {
+    if(cvChanged && !separatePitchStart) {
     	D(
     		Serial.println("CV Changed");
     	);
