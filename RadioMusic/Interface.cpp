@@ -160,7 +160,11 @@ uint16_t Interface::updateStartControls() {
 		}
 	}
 
-	start = constrain(((startCVInput.currentValue * startCVDivider) + (startPotInput.currentValue * startCVDivider)),0,ADC_MAX_VALUE);
+	if (separatePitchStart && pitchMode){
+		start = constrain((startCVInput.currentValue * startCVDivider), 0, ADC_MAX_VALUE);
+	} else {
+		start = constrain(((startCVInput.currentValue * startCVDivider) + (startPotInput.currentValue * startCVDivider)),0,ADC_MAX_VALUE);
+	}
 
 	if(changes) {
 //		D(
