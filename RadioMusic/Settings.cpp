@@ -240,7 +240,9 @@ void Settings::applySetting(String settingName, String settingValue) {
 	if(settingName.equalsIgnoreCase("quantiseNotePot") || settingName.equalsIgnoreCase("quantizeRootPot")) {
 		quantiseRootPot = toBoolean(settingValue);
 	}
-
+	if(settingName.equalsIgnoreCase("separatePitchStart")) {
+		separatePitchStart = toBoolean(settingValue);
+	}
 }
 
 // converting string to Float
@@ -293,6 +295,8 @@ void Settings::write() {
 	settingsFile.println(sort);
 	settingsFile.print("pitchMode=");
 	settingsFile.println(pitchMode);
+	settingsFile.print("separatePitchStart=");
+	settingsFile.print(separatePitchStart);
 	// close the file:
 	settingsFile.close();
 }

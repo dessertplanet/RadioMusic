@@ -61,6 +61,8 @@ public:
 	// Only overrides if true. Force no crossfades.
 	boolean hardSwap = false;
 
+	boolean separatePitchStart = false;
+
 	uint8_t loopMode = 0;
 
 private:
